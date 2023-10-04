@@ -1,39 +1,20 @@
-# Reddit Data Ingestion and Analysis App
-
-This document provides an overview of an application that utilizes Apache Airflow, Python microservices, MongoDB, and Redis to ingest and analyze Reddit text data. The backend of the application is built using Python Flask, following REST principles.
-
+# RTT - Reddit topic tracker
 ## Overview
 
-The Reddit Data Ingestion and Analysis App is designed to collect and analyze textual data from Reddit. It employs a modular architecture with microservices to ensure scalability and flexibility. The app uses Apache Airflow for orchestrating the ETL (Extract, Transform, Load) pipeline, Python Flask for the backend API, MongoDB for storing transformed data, and Redis for optimizing ETL processes.
+The Reddit topic tracker App is designed to collect textual data from Reddit. It employs a modular architecture with microservices to ensure scalability and flexibility. This set of repositories constitutes a comprehensive Reddit Data ETL (Extract, Transform, Load) tool designed to efficiently extract text data from Reddit, transform it, and load it into MongoDB. The tool is orchestrated using Apache Airflow and optimizes data processing by leveraging Redis for intermediate storage.
 
 ## Architecture
 
-### 1. Data Ingestion
+1. Data Ingestion: The data ingestion process involves collecting posts and comments from _Reddit_. This is accomplished using a Python microservice that interacts with the _Reddit_ API. The service fetches data based on specified subreddits, keywords, or other criteria, and then stores it in a temporary data store.
 
-The data ingestion process involves collecting posts and comments from Reddit. This is accomplished using a Python microservice that interacts with the Reddit API. The service fetches data based on specified subreddits, keywords, or other criteria, and then stores it in a temporary data store.
-
-### 2. ETL Pipeline
-
-Once the data is ingested, it undergoes the ETL process:
-
+2. _ETL_ Pipeline Once the data is ingested, it undergoes the _ETL_ process:
 - **Extract**: Another microservice extracts the data from the temporary store and prepares it for transformation.
 
 - **Transform**: The transformed data is processed to extract valuable insights, such as sentiment analysis, keyword extraction, and user engagement metrics. Python libraries like NLTK and spaCy can be used for natural language processing tasks.
 
-- **Load**: The transformed data is stored in a MongoDB database for easy retrieval and analysis.
+- **Load**: The transformed data is stored in a _MongoDB_ database for easy retrieval and analysis.
 
-### 3. Redis for Optimization
-
-Redis is used within the ETL pipeline to cache frequently accessed data and optimize processing speed. This helps reduce the load on the Reddit API and improves overall system performance.
-
-### 4. Backend API
-
-The backend of the application is built with Python Flask, following REST principles. It provides endpoints for:
-
-- Initiating data ingestion tasks
-- Monitoring the progress of data processing
-- Querying and retrieving analyzed Reddit data
-- Managing user authentication and access control
+3. Redis for Optimization: _Redis_ is used within the _ETL_ pipeline to cache frequently accessed data and optimize processing speed. This helps reduce the load on the Reddit API and improves overall system performance.
 
 ## Technology Stack
 
@@ -42,17 +23,49 @@ The backend of the application is built with Python Flask, following REST princi
 - **MongoDB**: Stores the transformed Reddit text data.
 - **Redis**: Caches data to optimize ETL processes.
 - **Python Flask**: Provides a RESTful API for interaction with the application.
+- **Docker**: Used to run the applications in container mode.
 
-## Use Cases
+## Application Components
 
-The Reddit Data Ingestion and Analysis App can be used for various purposes, including:
+The Reddit Data ETL Tool consists of the following repositories, each with its specific functionality:
 
-- Social media sentiment analysis
-- Trend analysis on Reddit
-- Content recommendations
-- User engagement analytics
-- Market research
+1. **db-API Repository**:
+   - Responsible for starting the MongoDB and API containers.
+   - MongoDB is used to persist the transformed text data.
+   - The API container provides the interface for registering Reddit comments with the external API.
 
-## Conclusion
+2. **Collector-API Repository**:
+   - Hosts the Collector API, which offers functions for extracting and transforming Reddit data.
+   - Utilizes Redis for optimizing data transfer between the extract and transform steps.
+   - Runs both the API and Redis containers.
 
-This application leverages Apache Airflow, Python microservices, MongoDB, and Redis to efficiently ingest and analyze Reddit text data. The Python Flask-based backend provides a user-friendly API for interacting with the system. It is a versatile solution for extracting valuable insights from Reddit discussions and can be adapted for various analytical and research purposes.
+3. **Collector-Airflow Repository**:
+   - Contains the Apache Airflow DAGs responsible for scheduling the ETL tasks.
+   - Orchestrates the data extraction, transformation, and loading processes.
+
+## Running the Application
+
+To run the Reddit Data ETL Tool, follow these steps:
+
+1. **db-API**:
+   - Clone the repository: `https://github.com/RTT-app/db-api.git`
+   - Navigate to the repository: `cd db-api`
+   - Use the Makefile to start the MongoDB and API containers: ```$ make run```
+
+2. **Collector-API**:
+   - Clone the repository: `git clone https://github.com/RTT-app/collector-api.git`
+   - Navigate to the repository: `cd collector-api`
+   - Use the Makefile to start the API and Redis containers: ```$ make run```
+
+3. **Collector-Airflow**:
+   - Clone the repository: `git clone https://github.com/RTT-app/collector-airflow.git`
+   - Navigate to the repository: `cd collector-airflow`
+   - Use the Makefile to run Apache Airflow and schedule the ETL tasks: ```$ make docker-up```
+
+## Customization
+
+You can customize each repository to suit your specific Reddit data processing needs. Modify the ETL logic, API endpoints, and Airflow DAGs as required.
+
+## Contributing
+
+Feel free to contribute to any of the repositories by opening issues, proposing improvements, or submitting pull requests.
